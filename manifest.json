@@ -1,7 +1,6 @@
 {
-  "author": "igorlogius",
   "manifest_version": 2,
-  "name": "Double Click Dictionary",
+  "name": "Double Click Dictionary (de-Googled)",
   "browser_action": {
     "default_area": "navbar",
     "default_popup": "options.html"
@@ -19,9 +18,14 @@
       "js": ["hammer.js", "content-script.js"]
     }
   ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "dbl-click-dict-agnostic@wesinator.github.io"
+    }
+  },
   "background": {
     "scripts": ["background.js"]
   },
-  "permissions": ["menus", "storage", "https://www.google.com/"],
-  "version": "2.2.15"
+  "permissions": ["menus", "storage", "https://www.ecosia.org/"],
+  "version": "2.0.0"
 }

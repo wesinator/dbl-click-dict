@@ -8,6 +8,18 @@ const GOOGLE_SPEECH_URI = "https://www.google.com/speech-api/v1/synthesize",
     enabled: true,
   };
 
+function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function() {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+            callback(rawFile.responseText);
+        }
+    }
+    rawFile.send(null);
+}
+
 browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   browser.browserAction.disable();
 
@@ -30,20 +42,40 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
     return null;
   }
 
-  let url = `https://www.google.com/search?hl=${lang}&q=define+${word}&gl=US`;
+  // load word source from json based on word source in settings
+  let word_source = await browser.storage.local.get("word_source");
+  readTextFile("./word_sources.json", function(text){
+      //console.log("Text:", text)
+      var source = JSON.parse(text);
+      //console.log(options);
+        for (i in source) {
+          if (word_source.word_source == source[i].name.toLowerCase())
+          {
+            url = source[i].url;
+            method = source[i].method;
+            wordDiv = source[i].word_div;
+            answerDiv = source[i].word_results_div;
+            posDiv = source[i].part_of_speech_div;
+            definitionDiv = source[i].definition_div;
+
+            //console.log(word_source, url, method, answerDiv, definitionDiv)
+          }
+        }
+  });
 
   const headers = new Headers({
     "User-Agent": USRAG,
   });
 
-  let response = await fetch(url, {
-    method: "GET",
+  var lookupUrl = url + word;
+  let response = await fetch(lookupUrl, {
+    method: method,
     credentials: "omit",
     headers,
   });
   let text = await response.text();
   const document = new DOMParser().parseFromString(text, "text/html"),
-    content = extractMeaning(document, { word, lang });
+    content = extractMeaning(document, { word, lang }, lookupUrl);
 
   results = await browser.storage.local.get();
   if (content && results) {
@@ -58,22 +90,24 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   return { content };
 });
 
-function extractMeaning(document, context) {
-  if (!document.querySelector("[data-dobid='hdw']")) {
+function extractMeaning(document, context, lookupUrl) {
+  try {
+    var word = document.getElementsByClassName(wordDiv)[0].innerText,
+      definitions = document.getElementsByClassName(definitionDiv),
+      pos = document.getElementsByClassName(posDiv),
+      meaning = "";
+
+    if (definitions) {
+      for (var defn of definitions) {
+        meaning = meaning + defn.innerText + '\n';
+      }
+    }
+
+    meaning = meaning[0].toUpperCase() + meaning.substring(1);
+  }
+  catch {
     return null;
   }
-
-  var word = document.querySelector("[data-dobid='hdw']").textContent,
-    definitionDiv = document.querySelector("div[data-dobid='dfn']"),
-    meaning = "";
-
-  if (definitionDiv) {
-    definitionDiv.querySelectorAll("span").forEach(function (span) {
-      if (!span.querySelector("sup")) meaning = meaning + span.textContent;
-    });
-  }
-
-  meaning = meaning[0].toUpperCase() + meaning.substring(1);
 
   var audio = document.querySelector("audio[jsname='QInZvb']"),
     source = document.querySelector("audio[jsname='QInZvb'] source"),
@@ -96,7 +130,7 @@ function extractMeaning(document, context) {
     audioSrc = `${GOOGLE_SPEECH_URI}?${queryString}`;
   }
 
-  return { word: word, meaning: meaning, audioSrc: audioSrc };
+  return { word: word, meaning: meaning, lookupUrl: lookupUrl, audioSrc: audioSrc };
 }
 
 async function saveWord(lang, content) {

@@ -1,0 +1,23 @@
+[
+    {
+        "name": "Ecosia",
+        "url": "https://www.ecosia.org/search?q=",
+        "method": "GET",
+        "answer_div": "instant-answer__body",
+        "word_results_div": "word-definitions__group",
+        "word_div": "word-definitions__headword",
+        "pronunciation_div": "word-definitions__pronunciation",
+        "part_of_speech_div": "word-definitions__pos",
+        "definition_div": "word-definitions__definition"
+    },
+    {
+        "name": "OED",
+        "url": "https://www.oed.com/search/dictionary/?scope=Entries&q=",
+        "method": "GET",
+        "answer_div": "resultsSet",
+        "word_div": "resultTitle",
+        "pronunciation_div": null,
+        "part_of_speech_div": null,
+        "definition_div": "snippet"
+    }
+]

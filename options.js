@@ -16,9 +16,12 @@ const DEFAULT_LANGUAGE = "en",
 async function saveOptions(e) {
   e.preventDefault();
   //
+  const WORD_SOURCE = document.querySelector("#word-source").value;
   const LANGUAGE = document.querySelector("#language-selector").value;
   const TRIGGER_KEY = document.querySelector("#popup-dblclick-key").value;
+
   await browser.storage.local.set({
+    word_source: WORD_SOURCE,
     language: LANGUAGE,
     interaction: {
       dblClick: {
@@ -38,6 +41,7 @@ async function saveOptions(e) {
     try {
       await browser.tabs.sendMessage(t.id, {
         cmd: "updateSettings",
+        WORD_SOURCE: document.querySelector('#word-source').value,
         TRIGGER_KEY: document.querySelector("#popup-dblclick-key").value,
         LANGUAGE: document.querySelector("#language-selector").value,
         CONFIRM: document.querySelector("#store-confirm-checkbox").checked,
@@ -63,6 +67,9 @@ async function restoreOptions() {
     history = results.history || { enabled: IS_HISTORY_ENABLED_BY_DEFAULT },
     definitions = results.definitions || {},
     confirm = results.confirm || { enabled: IS_CONFIRM_ENABLED_BY_DEFAULT };
+  
+  // word source
+  document.querySelector('#word-source').value = results.word_source || "ecosia";
 
   // language
   document.querySelector("#language-selector").value =
@@ -126,6 +133,7 @@ async function downloadHistory(e) {
 
 async function resetOptions(e) {
   await browser.storage.local.set({
+    word_source: "ecosia",
     language: DEFAULT_LANGUAGE,
     interaction: {
       dblClick: {

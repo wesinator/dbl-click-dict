@@ -177,7 +177,7 @@ function createDiv(info) {
   audio.style.display = "none";
 
   let moreInfo = document.createElement("a");
-  moreInfo.href = `https://www.google.com/search?hl=${LANGUAGE}&q=define+${info.word}`;
+  moreInfo.href = `https://www.google.com/search?hl=${LANGUAGE}&q=define+${info.word}`; // placeholder of google link, replaced with the lookupUrl in appendToDiv()
   moreInfo.style =
     "float: right; text-decoration: none;background-color:white;opacity: 0.5;";
   moreInfo.target = "_blank";
@@ -205,7 +205,8 @@ function appendToDiv(createdDiv, content) {
 
   let heightBefore = popupDiv.clientHeight;
   createdDiv.heading.textContent = content.word;
-  createdDiv.meaning.textContent = content.meaning;
+  createdDiv.meaning.innerText = content.meaning;
+  createdDiv.moreInfo.href = content.lookupUrl; // get url of lookup into the rendered result
   createdDiv.moreInfo.textContent = "More »";
 
   let heightAfter = popupDiv.clientHeight;
