@@ -1,7 +1,8 @@
 /* global browser */
 
+var manifest = browser.runtime.getManifest();
 const FXVER = /rv:([0-9.]+)/.exec(navigator.userAgent)[1];
-const USRAG = `Mozilla/5.0 (X11; Linux x86_64; rv:${FXVER}) Gecko/20100101 Firefox/${FXVER}`;
+const USRAG = `Mozilla/5.0 (Firefox; rv:${FXVER}) Gecko/20100101 WebExtension/${manifest.browser_specific_settings.gecko.id}`;
 
 const GOOGLE_SPEECH_URI = "https://www.google.com/speech-api/v1/synthesize",
   DEFAULT_HISTORY_SETTING = {
