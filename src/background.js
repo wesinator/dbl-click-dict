@@ -25,6 +25,7 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   browser.browserAction.disable();
 
   const { cmd, word, lang } = request;
+  var content = null;
 
   if (cmd === "cache") {
     let results = await browser.storage.local.get("definitions");
@@ -34,13 +35,18 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
       definitions[lang] = {};
     }
 
-    if (typeof definitions[lang][word] === "string") {
-      let content = JSON.parse(definitions[lang][word]);
+    var defnsList = definitions[lang]["definitions"];
+    if (typeof defnsList === "array") {
+      for (var elem of defnsList) {
+        if (elem["word"] == word)
+          content = elem;
+      }
+
       browser.browserAction.enable();
-      return { content };
     }
+
     browser.browserAction.enable();
-    return null;
+    return content;
   }
 
   // load word source from json based on word source in settings
@@ -75,8 +81,9 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
     headers,
   });
   let text = await response.text();
-  const document = new DOMParser().parseFromString(text, "text/html"),
-    content = extractMeaning(document, { word, lang }, lookupUrl);
+  const document = new DOMParser().parseFromString(text, "text/html")
+
+  content = extractMeaning(document, { word, lang }, lookupUrl);
 
   results = await browser.storage.local.get();
   if (content && results) {
@@ -148,8 +155,11 @@ async function saveWord(lang, content) {
   if (typeof definitions[lang] !== "object") {
     definitions[lang] = {};
   }
+  if (typeof definitions[lang]["definitions"] !== "object") {
+    definitions[lang]["definitions"] = [];
+  }
 
-  definitions[lang][word] = JSON.stringify(content);
+  definitions[lang]["definitions"].push(content);
 
   browser.storage.local.set({
     definitions,

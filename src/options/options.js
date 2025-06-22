@@ -88,7 +88,7 @@ async function restoreOptions() {
   let ret = 0;
   for (const lang in definitions) {
     if (Object.hasOwn(definitions, lang)) {
-      ret = ret + Object.keys(definitions[lang]).length;
+      ret = ret + Object.keys(definitions[lang]["definitions"]).length;
     }
   }
   document.querySelector("#num-words-in-history").innerText = ret;
