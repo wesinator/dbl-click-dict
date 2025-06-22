@@ -95,38 +95,18 @@ async function restoreOptions() {
 }
 
 async function downloadHistory(e) {
-  let fileContent = "";
-  let anchorTag = document.querySelector("#download-history-link");
-
   let results = await browser.storage.local.get("definitions");
-
   let definitions = results.definitions || {};
 
-  for (const lang in definitions) {
-    if (Object.hasOwn(definitions, lang)) {
-      fileContent += "\n";
-      fileContent += "LANGUAGE: " + lang;
-      fileContent += "\n";
-      fileContent += "\n";
+  var wordsJson = JSON.stringify(definitions, null, 2);
+  console.log(definitions, wordsJson);
+  var utcDate = new Date().toJSON().slice(0,10);
+  var a = document.createElement("a");
 
-      for (const definition in definitions[lang]) {
-        if (Object.hasOwn(definitions[lang], definition)) {
-          fileContent += definition;
-          fileContent += "\t";
-          fileContent += JSON.parse(definitions[lang][definition]).meaning;
-          fileContent += "\n";
-        }
-      }
-    }
-  }
-
-  anchorTag.href = window.URL.createObjectURL(
-    new Blob([fileContent], {
-      type: "text/plain",
-    })
-  );
-
-  anchorTag.dispatchEvent(new MouseEvent("click"));
+  // need encodeURIComponent to include json newlines properly
+  a.href = "data:text/json;charset=utf-8," + encodeURIComponent(wordsJson);
+  a.download = "Double-Click-Dictionary-Definitions_" + utcDate + ".json";
+  a.click();
 
   e.preventDefault();
 }
