@@ -3,19 +3,19 @@
   "name": "Double Click Dictionary (de-Googled)",
   "browser_action": {
     "default_area": "navbar",
-    "default_popup": "options.html"
+    "default_popup": "options/options.html"
   },
   "description": "View definitions easily as you browse the web. Double-click any word to view its definition in a small pop-up bubble.",
   "icons": {
-    "512": "icon.png"
+    "512": "asset/icon.png"
   },
   "options_ui": {
-    "page": "options.html"
+    "page": "options/options.html"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["hammer.js", "content-script.js"]
+      "js": ["content/hammer.js", "content/content-script.js"]
     }
   ],
   "browser_specific_settings": {

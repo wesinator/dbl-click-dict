@@ -98,6 +98,9 @@ function extractMeaning(document, context, lookupUrl) {
       pos = document.getElementsByClassName(posDiv),
       meaning = "";
 
+    // TODO: add nesting with pos section:
+    // document.getElementsByClassName("word-definitions__group")[0] .getElementsByClassName("word-definitions__definition")  .getElementsByClassName("word-definitions__pos")[0].innerText 
+
     if (definitions) {
       for (var defn of definitions) {
         meaning = meaning + defn.innerText + '\n';
