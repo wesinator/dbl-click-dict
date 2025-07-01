@@ -99,7 +99,7 @@ async function downloadHistory(e) {
   let definitions = results.definitions || {};
 
   var wordsJson = JSON.stringify(definitions, null, 2);
-  console.log(definitions, wordsJson);
+  //console.log(definitions, wordsJson);
   var utcDate = new Date().toJSON().slice(0,10);
   var a = document.createElement("a");
 
