@@ -136,6 +136,7 @@ async function resetOptions(e) {
 function clearHistory(e) {
   e.preventDefault();
   browser.storage.local.set({ definitions: {} });
+  document.querySelector("#num-words-in-history").innerText = 0;
 }
 
 function showSaveStatusAnimation() {
