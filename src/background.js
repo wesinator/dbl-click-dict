@@ -7,7 +7,8 @@ const USRAG = `Mozilla/5.0 (Firefox; rv:${FXVER}) Gecko/20100101 WebExtension/${
 const GOOGLE_SPEECH_URI = "https://www.google.com/speech-api/v1/synthesize",
   DEFAULT_HISTORY_SETTING = {
     enabled: true,
-  };
+  },
+  DEFAULT_WORD_SOURCE = "ecosia";
 
 function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
@@ -50,13 +51,14 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   }
 
   // load word source from json based on word source in settings
-  let word_source = await browser.storage.local.get("word_source");
+  let source_setting = await browser.storage.local.get("word_source");
+  let word_source = source_setting.word_source || DEFAULT_WORD_SOURCE;
   readTextFile("./word_sources.json", function(text){
       //console.log("Text:", text)
       var source = JSON.parse(text);
       //console.log(options);
         for (i in source) {
-          if (word_source.word_source == source[i].name.toLowerCase())
+          if (word_source == source[i].name.toLowerCase())
           {
             url = source[i].url;
             method = source[i].method;
@@ -73,6 +75,8 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   const headers = new Headers({
     "User-Agent": USRAG,
   });
+
+  //console.log("source setting", source_setting.word_source, "word source and url:", word_source, url);
 
   var lookupUrl = url + word;
   let response = await fetch(lookupUrl, {
