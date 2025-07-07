@@ -65,6 +65,7 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
             wordDiv = source[i].word_div;
             answerDiv = source[i].word_results_div;
             posDiv = source[i].part_of_speech_div;
+            pronunciationDiv = source[i].pronunciation_div;
             definitionDiv = source[i].definition_div;
 
             //console.log(word_source, url, method, answerDiv, definitionDiv)
@@ -105,20 +106,30 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
 function extractMeaning(document, context, lookupUrl) {
   try {
     var word = document.getElementsByClassName(wordDiv)[0].innerText,
-      definitions = document.getElementsByClassName(definitionDiv),
+      //definitions = document.getElementsByClassName(definitionDiv),
       pos = document.getElementsByClassName(posDiv),
-      meaning = "";
+      pronunciation = document.getElementsByClassName(pronunciationDiv)[0].innerText,
+      defnStr = pronunciation.trim() + "\n\n";
 
     // TODO: add nesting with pos section:
     // document.getElementsByClassName("word-definitions__group")[0] .getElementsByClassName("word-definitions__definition")  .getElementsByClassName("word-definitions__pos")[0].innerText 
+    answerSections = document.getElementsByClassName(answerDiv);
+    for (var i = 0; i < answerSections.length ; i++) {
+      defnPartOfSpeech = pos[i].innerText;
+      //console.log("pos " + i + ":", defnPartOfSpeech);
+      defnStr = defnStr + defnPartOfSpeech + '\n';
 
-    if (definitions) {
-      for (var defn of definitions) {
-        meaning = meaning + defn.innerText + '\n';
+      for (var defn of answerSections[i].childNodes) {
+        if (defn.className == definitionDiv) {
+          defnStr = defnStr + defn.innerText + '\n';
+          //console.log("definition:", defn.innerText, '\ndefnStr:', defnStr);
+        }
       }
+      defnStr = defnStr + '\n';
     }
 
-    meaning = meaning[0].toUpperCase() + meaning.substring(1);
+    defnStr = defnStr[0].toUpperCase() + defnStr.substring(1);
+    //console.log("final defnStr:", defnStr);
   }
   catch {
     return null;
@@ -145,7 +156,7 @@ function extractMeaning(document, context, lookupUrl) {
     audioSrc = `${GOOGLE_SPEECH_URI}?${queryString}`;
   }
 
-  return { word: word, meaning: meaning, lookupUrl: lookupUrl, audioSrc: audioSrc };
+  return { word: word, meaning: defnStr, lookupUrl: lookupUrl, audioSrc: audioSrc };
 }
 
 async function saveWord(lang, content) {
