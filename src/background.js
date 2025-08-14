@@ -37,7 +37,7 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
     }
 
     var defnsList = definitions[lang]["definitions"];
-    if (typeof defnsList === "array") {
+    if (defnsList instanceof Array) {
       for (var elem of defnsList) {
         if (elem["word"] == word)
           content = elem;
