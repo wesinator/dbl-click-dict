@@ -7,26 +7,27 @@ let DEFAULT_LANGUAGE = "en",
   CONFIRM;
 
 async function showMeaning(event) {
-  let info = getSelectionInfo(event);
-  if (!info) {
+  let selectedWord = getSelectedWord(event);
+  if (!selectedWord) {
     return;
   }
 
-  let response = await retrieveMeaningFromCache(info);
+  let response = await retrieveMeaningFromCache(selectedWord);
+  //console.log("cache response", response);
 
   if (response === null) {
     if (TRIGGER_KEY === "none" && CONFIRM === true) {
-      if (window.confirm("Lookup definition for '" + info.word + "'?")) {
-        response = await retrieveMeaning(info);
+      if (window.confirm("Lookup definition for '" + selectedWord + "'?")) {
+        response = await retrieveMeaning(selectedWord);
       } else {
         return;
       }
     } else {
-      response = await retrieveMeaning(info);
+      response = await retrieveMeaning(selectedWord);
     }
   }
   // create defintion container
-  let createdDiv = createDiv(info);
+  let createdDiv = createDiv(selectedWord);
 
   if (response) {
     appendToDiv(createdDiv, response);
@@ -35,7 +36,7 @@ async function showMeaning(event) {
   }
 }
 
-function getSelectionInfo(event) {
+function getSelectedWord(event) {
   let word;
 
   let selection = null;
@@ -54,27 +55,25 @@ function getSelectionInfo(event) {
       return null;
     }
 
-    return {
-      word: word,
-    };
+    return word;
   } catch (e) {
     return null; // selection not available
   }
 }
 
-function retrieveMeaningFromCache(info) {
+function retrieveMeaningFromCache(word) {
   return browser.runtime.sendMessage({
     cmd: "cache",
-    word: info.word.toLowerCase(),
+    word: word.toLowerCase(),
     lang: LANGUAGE,
     time: Date.now(),
   });
 }
 
-function retrieveMeaning(info) {
+function retrieveMeaning(word) {
   return browser.runtime.sendMessage({
     cmd: "remote",
-    word: info.word.toLowerCase(),
+    word: word.toLowerCase(),
     lang: LANGUAGE,
     time: Date.now(),
   });
