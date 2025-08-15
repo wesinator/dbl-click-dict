@@ -27,5 +27,5 @@
     "scripts": ["background.js"]
   },
   "permissions": ["menus", "storage", "https://www.google.com/", "https://www.ecosia.org/"],
-  "version": "2.3.2"
+  "version": "2.4.0"
 }
