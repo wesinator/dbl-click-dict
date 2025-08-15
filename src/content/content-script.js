@@ -28,8 +28,8 @@ async function showMeaning(event) {
   // create defintion container
   let createdDiv = createDiv(info);
 
-  if (response.content) {
-    appendToDiv(createdDiv, response.content);
+  if (response) {
+    appendToDiv(createdDiv, response);
   } else {
     noMeaningFound(createdDiv);
   }
