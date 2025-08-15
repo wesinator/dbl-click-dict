@@ -47,7 +47,7 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
     }
 
     browser.browserAction.enable();
-    return content;
+    return { content };
   }
 
   // load word source from json based on word source in settings
