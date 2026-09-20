@@ -20,7 +20,12 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "dbl-click-dict-agnostic@wesinator.github.io"
+      "id": "dbl-click-dict-agnostic@wesinator.github.io",
+
+      // websiteContent implicit consent - https://extensionworkshop.com/documentation/publish/add-on-policies/#implicit-consent-for-self-evident-single-use-extension
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
   "background": {
