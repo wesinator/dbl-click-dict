@@ -74,16 +74,14 @@ browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   });
 
   const headers = new Headers({
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "User-Agent": USRAG,
   });
-
-  //console.log("source setting", source_setting.word_source, "word source and url:", word_source, url);
-
   var lookupUrl = url + word;
   let response = await fetch(lookupUrl, {
     method: method,
-    credentials: "omit",
-    headers,
+    credentials: "include",
+    headers
   });
   let text = await response.text();
   const document = new DOMParser().parseFromString(text, "text/html")
