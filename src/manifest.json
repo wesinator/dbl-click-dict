@@ -29,7 +29,7 @@
     }
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js", "readTextFile.js"]
   },
   "permissions": ["menus", "storage", "https://www.google.com/", "https://www.ecosia.org/"],
   "version": "2.5.0"

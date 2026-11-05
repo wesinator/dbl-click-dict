@@ -10,18 +10,6 @@ const GOOGLE_SPEECH_URI = "https://www.google.com/speech-api/v1/synthesize",
   },
   DEFAULT_WORD_SOURCE = "ecosia";
 
-function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
-    //rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function() {
-        if (rawFile.readyState === 4 && rawFile.status == "200") {
-            callback(rawFile.responseText);
-        }
-    }
-    rawFile.send(null);
-}
-
 browser.runtime.onMessage.addListener(async (request /*, sender*/) => {
   browser.browserAction.disable();
 
